@@ -1,0 +1,17 @@
+{% extends "layout.html" %} {% block content %}
+<h2>Scheduling Results (Quantum: {{ quantum }})</h2>
+<table>
+  <tr>
+    <th>Process</th>
+    <th>Waiting Time</th>
+    <th>Turnaround Time</th>
+  </tr>
+  {% for process, waiting, turnaround in results %}
+  <tr>
+    <td>{{ process }}</td>
+    <td>{{ waiting }}</td>
+    <td>{{ turnaround }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

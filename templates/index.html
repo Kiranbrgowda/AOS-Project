@@ -1,34 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename = 'main.css')}}">
-    <link rel="stylesheet" href="{{ url_for('static', filename = 'main.js')}}">
+{% extends "layout.html" %} {% block content %}
+<h2>Enter Process Data</h2>
+<form action="/schedule" method="post">
+  <div>
+    <h3>Quantum Time:</h3>
+    <input type="number" name="quantum" required />
+  </div>
+  <div>
+    <h3>Processes:</h3>
+    {% for i in range(3) %}
+    <div>
+      <label for="process_{{i}}">Process ID:</label>
+      <input type="text" name="processes" id="process_{{i}}" required />
 
-    <title>Scheduling Simulator</title>
-    <!-- You can add additional meta tags, stylesheets, or scripts here -->
-</head>
-<body>
-    <form>
-        <label for="numberInput">Number:</label>
-        <input type="number" id="numberInput" name="numberInput" required><br>
+      <label for="burst_time_{{i}}">Burst Time:</label>
+      <input type="number" name="burst_times" id="burst_time_{{i}}" required />
 
-        <label for="textInput">Text:</label>
-        <input type="text" id="textInput" name="textInput" required><br>
+      <label for="arrival_time_{{i}}">Arrival Time:</label>
+      <input
+        type="number"
+        name="arrival_times"
+        id="arrival_time_{{i}}"
+        required
+      />
 
-        <label for="arrivalTimeInput">Arrival Time:</label>
-        <input type="time" id="arrivalTimeInput" name="arrivalTimeInput" required><br>
+      <label for="priority_{{i}}">Priority:</label>
+      <input type="number" name="priorities" id="priority_{{i}}" required />
 
-        <label for="priorityInput">Priority:</label>
-        <select id="priorityInput" name="priorityInput" required>
-            <option value="high">High</option>
-            <option value="medium">Medium</option>
-            <option value="low">Low</option>
-        </select><br>
-
-        <input type="submit" value="Submit">
-    </form>
-
-</body>
-</html>
+      <label for="repeat_count_{{i}}">Repeat Count:</label>
+      <input
+        type="number"
+        name="repeat_counts"
+        id="repeat_count_{{i}}"
+        required
+      />
+    </div>
+    {% endfor %}
+  </div>
+  <input type="submit" value="Schedule" />
+</form>
+{% endblock %}
