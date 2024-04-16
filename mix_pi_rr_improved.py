@@ -45,5 +45,8 @@ def mix_pi_rr_improved(processes, burst_times, arrival_times, priorities, repeat
     for i in range(n):
         turnaround_times[i] = completion_times[i] - arrival_times[i]
         waiting_times[i] = turnaround_times[i] - burst_times[i]
+    
+    print(waiting_times)
+    print(turnaround_times)
 
     return waiting_times, turnaround_times

@@ -1,12 +1,43 @@
 {% extends "layout.html" %} {% block content %}
 <h2>Scheduling Results (Quantum: {{ quantum }})</h2>
+<p>mix Pi rr</p>
 <table>
   <tr>
     <th>Process</th>
     <th>Waiting Time</th>
     <th>Turnaround Time</th>
   </tr>
-  {% for process, waiting, turnaround in results %}
+  {% for process, waiting, turnaround in result1 %}
+  <tr>
+    <td>{{ process }}</td>
+    <td>{{ waiting }}</td>
+    <td>{{ turnaround }}</td>
+  </tr>
+  {% endfor %}
+</table>
+<p>RR</p>
+<table>
+  <tr>
+    <th>Process</th>
+    <th>Waiting Time</th>
+    <th>Turnaround Time</th>
+  </tr>
+  {% for process, waiting, turnaround in result2 %}
+  <tr>
+    <td>{{ process }}</td>
+    <td>{{ waiting }}</td>
+    <td>{{ turnaround }}</td>
+  </tr>
+  {% endfor %}
+</table>
+<p>FCFS</p>
+<table>
+  <tr>
+    <th>Process</th>
+    <th>Waiting Time</th>
+    <th>Turnaround Time</th>
+  </tr>
+  {% for process, waiting, turnaround in result3 %}
   <tr>
     <td>{{ process }}</td>
     <td>{{ waiting }}</td>

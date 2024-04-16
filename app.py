@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request
 from mix_pi_rr_improved import mix_pi_rr_improved
+from Roundrobin import round_robin
+from Fcfs import fcfs
 app = Flask(__name__)
 
 # Import or include your Mix PI-RR function here
@@ -20,10 +22,20 @@ def schedule():
 
     waiting_times, turnaround_times = mix_pi_rr_improved(
         processes, burst_times, arrival_times, priorities, repeat_counts, quantum)
+    
+    result1 = zip(processes, waiting_times, turnaround_times)
+    
+    waiting_times, turnaround_times =  round_robin(burst_times, arrival_times, quantum)
 
     # Combine the results with the process names for display
-    results = zip(processes, waiting_times, turnaround_times)
-    return render_template('results.html', results=results, quantum=quantum)
+    
+    result2 = zip(processes, waiting_times, turnaround_times)
+
+    waiting_times, turnaround_times =  fcfs(processes, burst_times)
+
+    result3 = zip(processes, waiting_times, turnaround_times)
+
+    return render_template('results.html', result1=result1, result2=result2, result3 = result3,  quantum=quantum)
 
 if __name__ == '__main__':
     app.run(debug=True)
