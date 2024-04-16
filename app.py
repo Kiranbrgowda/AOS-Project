@@ -70,14 +70,30 @@ def plot():
     y1 = [sum(waiting_times1), sum(waiting_times2), sum(waiting_times)]
     y2 = [sum(turnaround_times1), sum(turnaround_times2), sum(turnaround_times)]
     
-    plt.figure(figsize=(8, 6))
-    plt.plot(x, y1, marker='o', label='Waiting Time')
-    plt.plot(x, y2, marker='o', label='Turnaround Time')
-    plt.xticks(x, ['Mix PI RR', 'RR', 'FCFS'])
-    plt.xlabel('Scheduling Algorithm')
-    plt.ylabel('Time')
-    plt.title('Comparison of Scheduling Algorithms')
-    plt.legend()
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
+    
+    # Line graph
+    ax1.plot(x, y1, marker='o', label='Waiting Time')
+    ax1.plot(x, y2, marker='o', label='Turnaround Time')
+    ax1.set_xticks(x)
+    ax1.set_xticklabels(['Mix PI RR', 'RR', 'FCFS'])
+    ax1.set_xlabel('Scheduling Algorithm')
+    ax1.set_ylabel('Time')
+    ax1.set_title('Comparison of Scheduling Algorithms (Line Graph)')
+    ax1.legend()
+    
+    # Bar graph
+    bar_width = 0.35
+    ax2.bar([i - bar_width/2 for i in x], y1, bar_width, label='Waiting Time')
+    ax2.bar([i + bar_width/2 for i in x], y2, bar_width, label='Turnaround Time')
+    ax2.set_xticks(x)
+    ax2.set_xticklabels(['Mix PI RR', 'RR', 'FCFS'])
+    ax2.set_xlabel('Scheduling Algorithm')
+    ax2.set_ylabel('Time')
+    ax2.set_title('Comparison of Scheduling Algorithms (Bar Graph)')
+    ax2.legend()
+    
+    plt.tight_layout()
 
     # Save the plot as a PNG image
     img = BytesIO()
