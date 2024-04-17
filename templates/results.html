@@ -1,6 +1,7 @@
 {% extends "layout.html" %} {% block content %}
 <h2>Scheduling Results (Quantum: {{ quantum }})</h2>
-<p>mix Pi rr</p>
+
+<h3>Mix PI RR</h3>
 <table>
   <tr>
     <th>Process</th>
@@ -15,7 +16,8 @@
   </tr>
   {% endfor %}
 </table>
-<p>RR</p>
+
+<h3>RR</h3>
 <table>
   <tr>
     <th>Process</th>
@@ -30,7 +32,8 @@
   </tr>
   {% endfor %}
 </table>
-<p>FCFS</p>
+
+<h3>FCFS</h3>
 <table>
   <tr>
     <th>Process</th>
@@ -45,6 +48,7 @@
   </tr>
   {% endfor %}
 </table>
+
 <h2>Comparison of Scheduling Algorithms</h2>
 <img src="{{ url_for('plot', data=data) }}" alt="Comparison Plot">
 {% endblock %}

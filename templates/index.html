@@ -7,8 +7,8 @@
   </div>
   <div>
     <h3>Processes:</h3>
-    {% for i in range(3) %}
-    <div>
+    {% for i in range(6) %}
+    <div style="display: flex; padding-bottom: 30px; margin: auto;">
       <label for="process_{{i}}">Process ID:</label>
       <input type="text" name="processes" id="process_{{i}}" value="2" />
 
@@ -39,8 +39,5 @@
     {% endfor %}
   </div>
   <input type="submit" value="Schedule" />
-</form>
-<form action="/pllot" method="post">
-  <input type="submit" value="Graph" />
 </form>
 {% endblock %}
