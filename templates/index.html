@@ -3,38 +3,26 @@
 <form action="/schedule" method="post">
   <div>
     <h3>Quantum Time:</h3>
-    <input type="number" name="quantum" value="2" required />
+    <input type="number" name="quantum" value="{{ quantum }}" required />
   </div>
   <div>
     <h3>Processes:</h3>
-    {% for i in range(6) %}
+    {% for i in range(processes|length) %}
     <div style="display: flex; padding-bottom: 30px; margin: auto;">
       <label for="process_{{i}}">Process ID:</label>
-      <input type="text" name="processes" id="process_{{i}}" value="2" />
+      <input type="text" name="processes" id="process_{{i}}" value="{{ processes[i] }}" />
 
       <label for="burst_time_{{i}}">Burst Time:</label>
-      <input type="number" name="burst_times" id="burst_time_{{i}}" value="2" required />
+      <input type="number" name="burst_times" id="burst_time_{{i}}" value="{{ burst_times[i] }}" required />
 
       <label for="arrival_time_{{i}}">Arrival Time:</label>
-      <input
-        type="number"
-        name="arrival_times"
-        id="arrival_time_{{i}}"
-        value="2"
-        required
-      />
+      <input type="number" name="arrival_times" id="arrival_time_{{i}}" value="{{ arrival_times[i] }}" required />
 
       <label for="priority_{{i}}">Priority:</label>
-      <input type="number" name="priorities" id="priority_{{i}}" value="2" required />
+      <input type="number" name="priorities" id="priority_{{i}}" value="{{ priorities[i] }}" required />
 
       <label for="repeat_count_{{i}}">Repeat Count:</label>
-      <input
-        type="number"
-        name="repeat_counts"
-        id="repeat_count_{{i}}"
-        value="2"
-        required
-      />
+      <input type="number" name="repeat_counts" id="repeat_count_{{i}}" value="{{ repeat_counts[i] }}" required />
     </div>
     {% endfor %}
   </div>

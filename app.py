@@ -9,18 +9,37 @@ from io import BytesIO
 import json
 from urllib.parse import quote, unquote
 
-
 app = Flask(__name__)
 
 # Import or include your Mix PI-RR function here
- 
-@app.route('/')
+
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    if request.method == 'POST':
+        return schedule()
+    else:
+        with open('input.txt', 'r') as file:
+            lines = file.readlines()
+
+        data = {}
+        for line in lines:
+            key, value = line.strip().split('=')
+            data[key] = value.split(',')
+
+        quantum = data['quantum'][0]
+        processes = data['processes']
+        burst_times = list(map(int, data['burst_times']))
+        arrival_times = list(map(int, data['arrival_times']))
+        priorities = list(map(int, data['priorities']))
+        repeat_counts = list(map(int, data['repeat_counts']))
+
+        return render_template('index.html', quantum=quantum, processes=processes,
+                                burst_times=burst_times, arrival_times=arrival_times,
+                                priorities=priorities, repeat_counts=repeat_counts)
 
 @app.route('/schedule', methods=['POST'])
 def schedule():
-    # Assuming form input names match the variables
+    # Get the input from the form
     processes = request.form.getlist('processes')
     burst_times = list(map(int, request.form.getlist('burst_times')))
     arrival_times = list(map(int, request.form.getlist('arrival_times')))
@@ -30,16 +49,15 @@ def schedule():
 
     waiting_times1, turnaround_times1 = mix_pi_rr_improved(
         processes, burst_times, arrival_times, priorities, repeat_counts, quantum)
-    
+
     result1 = zip(processes, waiting_times1, turnaround_times1)
-    
-    waiting_times2, turnaround_times2 =  round_robin(burst_times, arrival_times, quantum)
+
+    waiting_times2, turnaround_times2 = round_robin(burst_times, arrival_times, quantum)
 
     # Combine the results with the process names for display
-    
     result2 = zip(processes, waiting_times2, turnaround_times2)
 
-    waiting_times, turnaround_times =  fcfs(processes, burst_times)
+    waiting_times, turnaround_times = fcfs(processes, burst_times)
 
     result3 = zip(processes, waiting_times, turnaround_times)
 
@@ -53,7 +71,6 @@ def schedule():
     }
 
     return render_template('results.html', result1=result1, result2=result2, result3=result3, quantum=quantum, data=quote(json.dumps(data)))
-
 
 @app.route('/plot')
 def plot():
@@ -69,9 +86,9 @@ def plot():
     x = [1, 2, 3]
     y1 = [sum(waiting_times1), sum(waiting_times2), sum(waiting_times)]
     y2 = [sum(turnaround_times1), sum(turnaround_times2), sum(turnaround_times)]
-    
+
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
-    
+
     # Line graph
     ax1.plot(x, y1, marker='o', label='Waiting Time')
     ax1.plot(x, y2, marker='o', label='Turnaround Time')
@@ -81,7 +98,7 @@ def plot():
     ax1.set_ylabel('Time')
     ax1.set_title('Comparison of Scheduling Algorithms (Line Graph)')
     ax1.legend()
-    
+
     # Bar graph
     bar_width = 0.35
     ax2.bar([i - bar_width/2 for i in x], y1, bar_width, label='Waiting Time')
@@ -92,7 +109,7 @@ def plot():
     ax2.set_ylabel('Time')
     ax2.set_title('Comparison of Scheduling Algorithms (Bar Graph)')
     ax2.legend()
-    
+
     plt.tight_layout()
 
     # Save the plot as a PNG image
