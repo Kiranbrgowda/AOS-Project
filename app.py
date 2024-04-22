@@ -20,7 +20,15 @@ def index():
     if request.method == 'POST':
         return schedule()
     else:
-        with open('input.txt', 'r') as file:
+        file_name = request.form.get('file')
+        if file_name == 'Sample1':
+            file_path = 'Sample1.txt'
+        elif file_name == 'Sample2':
+            file_path = 'Sample2.txt'
+        else:
+            file_path = 'Sample3.txt'
+
+        with open(file_path, 'r') as file:
             lines = file.readlines()
 
         data = {}
