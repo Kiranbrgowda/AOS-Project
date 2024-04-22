@@ -50,3 +50,32 @@ def mix_pi_rr_improved(processes, burst_times, arrival_times, priorities, repeat
     print(turnaround_times)
 
     return waiting_times, turnaround_times
+
+def test_scheduler():
+    processes = ['P1', 'P2', 'P3', 'P4', 'P5']
+    burst_times = [5,12,16,21,23]
+    arrival_times = [0, 0, 0, 0, 0]
+    priorities = [1, 2, 5, 3, 4]
+    repeat_counts = [3, 3, 3, 3, 3]  # Repeating with original priority
+    quantum = 4
+
+    waiting_times, turnaround_times = mix_pi_rr_improved(
+        processes=processes,
+        burst_times=burst_times,
+        arrival_times=arrival_times,
+        priorities=priorities,
+        repeat_counts=repeat_counts,
+        quantum=quantum
+    )
+
+    # Calculate average waiting time and turnaround time
+    average_waiting_time = sum(waiting_times) / len(waiting_times)
+    average_turnaround_time = sum(turnaround_times) / len(turnaround_times)
+
+    print("Average Waiting Time:", average_waiting_time)
+    print("Average Turnaround Time:", average_turnaround_time)
+
+    return waiting_times, turnaround_times
+
+# Call the testing function
+test_scheduler()
