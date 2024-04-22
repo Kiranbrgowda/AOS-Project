@@ -49,6 +49,55 @@
   {% endfor %}
 </table>
 
+<h3>Pbdrr</h3>
+<table>
+  <tr>
+    <th>Process</th>
+    <th>Waiting Time</th>
+    <th>Turnaround Time</th>
+  </tr>
+  {% for process, waiting, turnaround in result4 %}
+  <tr>
+    <td>{{ process }}</td>
+    <td>{{ waiting }}</td>
+    <td>{{ turnaround }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 <h2>Comparison of Scheduling Algorithms</h2>
 <img src="{{ url_for('plot', data=data) }}" alt="Comparison Plot">
+
+<h2>Final Result Comparison</h2>
+<table>
+  <tr>
+    <th>Algorithm</th>
+    <th>Average Waiting Time</th>
+    <th>Average Turnaround Time</th>
+  </tr>
+  <tr>
+    <td>RR</td>
+    <td>{{ compared_results.avg_wait_rr }}</td>
+    <td>{{ compared_results.avg_tat_rr }}</td>
+  </tr>
+  <tr>
+    <td>PBDRR</td>
+    <td>{{ compared_results.avg_wait_pbrr }}</td>
+    <td>{{ compared_results.avg_tat_pbrr }}</td>
+  </tr>
+  <tr>
+    <td>Mix_Pi_RR</td>
+    <td>{{ compared_results.avg_wait_mix }}</td>
+    <td>{{ compared_results.avg_tat_mix }}</td>
+  </tr>
+  <tr>
+    <td>FCFS</td>
+    <td>{{ compared_results.avg_wait_fcfs }}</td>
+    <td>{{ compared_results.avg_tat_fcfs }}</td>
+  </tr>
+</table>
+
+<!-- <h2>Comparison of Scheduling Algorithms</h2>
+<img src="{{ url_for('plot2', data=data) }}" alt="Final Result Comparison Plot"> -->
+
 {% endblock %}
