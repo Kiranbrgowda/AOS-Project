@@ -10,53 +10,81 @@ from io import BytesIO
 import json
 from urllib.parse import quote, unquote
 from compare_file import compare_scheduling_algorithms
+import base64
+import requests
 
 app = Flask(__name__)
 
 # Import or include your Mix PI-RR function here
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET','POST'])
 def index():
-    if request.method == 'POST':
-        return schedule()
-    else:
-        file_name = request.form.get('file')
-        if file_name == 'Sample1':
-            file_path = 'Sample1.txt'
-        elif file_name == 'Sample2':
-            file_path = 'Sample2.txt'
-        else:
-            file_path = 'Sample3.txt'
-
-        with open(file_path, 'r') as file:
-            lines = file.readlines()
-
-        data = {}
-        for line in lines:
-            key, value = line.strip().split('=')
-            data[key] = value.split(',')
-
-        quantum = data['quantum'][0]
-        processes = data['processes']
-        burst_times = list(map(int, data['burst_times']))
-        arrival_times = list(map(int, data['arrival_times']))
-        priorities = list(map(int, data['priorities']))
-        repeat_counts = list(map(int, data['repeat_counts']))
-
-        return render_template('index.html', quantum=quantum, processes=processes,
-                                burst_times=burst_times, arrival_times=arrival_times,
-                                priorities=priorities, repeat_counts=repeat_counts)
-
-@app.route('/schedule', methods=['POST'])
-def schedule():
-    # Get the input from the form
+    # if request.method == 'POST':
+    #     # Handle form data
+    #     try:
     processes = request.form.getlist('processes')
     burst_times = list(map(int, request.form.getlist('burst_times')))
     arrival_times = list(map(int, request.form.getlist('arrival_times')))
     priorities = list(map(int, request.form.getlist('priorities')))
     repeat_counts = list(map(int, request.form.getlist('repeat_counts')))
     quantum = int(request.form['quantum'])
+    return render_template('index.html', quantum=quantum, processes=processes,
+                            burst_times=burst_times, arrival_times=arrival_times,
+                            priorities=priorities, repeat_counts=repeat_counts)
+    #     except Exception as e:
+    #         return str(e), 400
+    # else:
+    #     return render_template('index.html')
+    
+@app.route('/readfile',methods=['POST'])
+def readfile():
+    file_name = request.form.get('file')
+    if file_name == 'Sample1':
+        file_path = 'Sample1.txt'
+    elif file_name == 'Sample2':
+        file_path = 'Sample2.txt'
+    else:
+        file_path = 'Sample3.txt'
+    
 
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+
+    data = {}
+    for line in lines:
+        key, value = line.strip().split('=')
+        data[key] = value.split(',')
+
+    quantum = data['quantum'][0]
+    processes = data['processes']
+    burst_times = list(map(int, data['burst_times']))
+
+    arrival_times = list(map(int, data['arrival_times']))
+    priorities = list(map(int, data['priorities']))
+    repeat_counts = list(map(int, data['repeat_counts']))
+    result1,result2,result3,result4,compared_results,rr_plot, fcfs_plot, mix_plot, pbdr_plot = processalgo(processes,burst_times,arrival_times,priorities,repeat_counts,quantum)
+
+    return render_template('results.html', result1=result1, result2=result2, result3=result3, result4=result4, quantum=quantum, compared_results=compared_results, rr_plot=rr_plot, fcfs_plot=fcfs_plot, mix_plot=mix_plot, pbdr_plot=pbdr_plot)
+
+
+def plot_times(processes, waiting_times, turnaround_times, title):
+    fig, ax = plt.subplots()
+    indices = range(len(processes))
+    ax.bar(indices, waiting_times, width=0.3, label='Waiting Time', align='center')
+    ax.bar([p + 0.3 for p in indices], turnaround_times, width=0.3, label='Turnaround Time', align='center')
+    ax.set_xlabel('Processes')
+    ax.set_ylabel('Time Units')
+    ax.set_title(title)
+    ax.set_xticks([p + 0.15 for p in indices])
+    ax.set_xticklabels(processes)
+    ax.legend()
+    buf = BytesIO()
+    plt.savefig(buf, format='png')
+    plt.close(fig)  # Close the figure to free memory
+    buf.seek(0)
+    return base64.b64encode(buf.getvalue()).decode('utf-8')
+
+def processalgo(processes,burst_times,arrival_times,priorities,repeat_counts,quantum):
     waiting_times1, turnaround_times1 = mix_pi_rr_improved(
         processes, burst_times, arrival_times, priorities, repeat_counts, quantum)
 
@@ -96,6 +124,13 @@ def schedule():
     avg_tat_fcfs = compared_results['avg_tat_fcfs']
 
 
+    rr_plot = plot_times(processes, waiting_times2, turnaround_times2, 'Round Robin Results')
+    fcfs_plot = plot_times(processes, waiting_times, turnaround_times, 'FCFS Results')
+    mix_plot = plot_times(processes, waiting_times1, turnaround_times1, 'Mix PI-RR Improved Results')
+    pbdr_plot = plot_times(processes, waiting_times4, turnaround_times4, 'Priority Based DRR Results')
+
+
+
     data = {
         'waiting_times1': waiting_times1,
         'waiting_times2': waiting_times2,
@@ -114,8 +149,71 @@ def schedule():
         'avg_wait_fcfs': avg_wait_fcfs,
         'avg_tat_fcfs': avg_tat_fcfs
     }
+    return result1,result2,result3,result4,compared_results,rr_plot, fcfs_plot, mix_plot, pbdr_plot,data
 
-    return render_template('results.html', result1=result1, result2=result2, result3=result3, result4=result4, quantum=quantum, data=quote(json.dumps(data)), compared_results=compared_results)
+@app.route('/schedule', methods=['POST'])
+def schedule():
+    # Get the input from the form
+    processes = request.form.getlist('processes')
+    burst_times = list(map(int, request.form.getlist('burst_times')))
+    arrival_times = list(map(int, request.form.getlist('arrival_times')))
+    priorities = list(map(int, request.form.getlist('priorities')))
+    repeat_counts = list(map(int, request.form.getlist('repeat_counts')))
+    quantum = int(request.form['quantum'])
+
+#     waiting_times1, turnaround_times1 = mix_pi_rr_improved(
+#         processes, burst_times, arrival_times, priorities, repeat_counts, quantum)
+
+#     result1 = zip(processes, waiting_times1, turnaround_times1)
+
+#     waiting_times2, turnaround_times2 = round_robin(burst_times, arrival_times, quantum)
+
+#     # Combine the results with the process names for display
+#     result2 = zip(processes, waiting_times2, turnaround_times2)
+
+#     waiting_times, turnaround_times = fcfs(processes, burst_times)
+
+#     result3 = zip(processes, waiting_times, turnaround_times)
+
+#    # Call pb_drr_schedule function
+#     pb_drr_processes = [{'id': i + 1, 'burst_time': bt, 'priority': p} for i, (bt, p) in enumerate(zip(burst_times, priorities))]
+#     scheduled_processes = pb_drr_schedule(pb_drr_processes)
+
+#     # Extract waiting times and turnaround times for PB DRR
+#     waiting_times4 = [p['wait_time'] for p in scheduled_processes]
+#     turnaround_times4 = [p['turnaround_time'] for p in scheduled_processes]
+
+#     result4 = zip(processes, waiting_times4, turnaround_times4)
+
+#     # Call compare function
+#     pb_drr_processes = [{'id': i + 1, 'burst_time': bt, 'priority': p} for i, (bt, p) in enumerate(zip(burst_times, priorities))]
+#     compared_results = compare_scheduling_algorithms(pb_drr_processes)
+    
+
+#     avg_wait_rr = compared_results['avg_wait_rr']
+#     avg_tat_rr = compared_results['avg_tat_rr']
+#     avg_wait_pbrr = compared_results['avg_wait_pbrr']
+#     avg_tat_pbrr = compared_results['avg_tat_pbrr']
+#     avg_wait_mix = compared_results['avg_wait_mix']
+#     avg_tat_mix = compared_results['avg_tat_mix']
+#     avg_wait_fcfs = compared_results['avg_wait_fcfs']
+#     avg_tat_fcfs = compared_results['avg_tat_fcfs']
+
+
+#     rr_plot = plot_times(processes, waiting_times2, turnaround_times2, 'Round Robin Results')
+#     fcfs_plot = plot_times(processes, waiting_times, turnaround_times, 'FCFS Results')
+#     mix_plot = plot_times(processes, waiting_times1, turnaround_times1, 'Mix PI-RR Improved Results')
+#     pbdr_plot = plot_times(processes, waiting_times4, turnaround_times4, 'Priority Based DRR Results')
+
+
+    result1,result2,result3,result4,compared_results,rr_plot, fcfs_plot, mix_plot, pbdr_plot, data = processalgo(processes,burst_times,arrival_times,priorities,repeat_counts,quantum)
+    return render_template('results.html', result1=result1, result2=result2, result3=result3, result4=result4, quantum=quantum, compared_results=compared_results, rr_plot=rr_plot, fcfs_plot=fcfs_plot, mix_plot=mix_plot, pbdr_plot=pbdr_plot,data=quote(json.dumps(data)))
+
+
+
+
+
+
 @app.route('/plot')
 def plot():
     data = json.loads(unquote(request.args.get('data')))
@@ -127,14 +225,14 @@ def plot():
     turnaround_times = data['turnaround_times']
     waiting_times4 = data['waiting_times4']
     turnaround_times4 = data['turnaround_times4']
-    avg_wait_rr = data['avg_wait_rr']
-    avg_tat_rr = data['avg_tat_rr']
-    avg_wait_pbrr = data['avg_wait_pbrr']
-    avg_tat_pbrr = data['avg_tat_pbrr']
-    avg_wait_mix = data['avg_wait_mix']
-    avg_tat_mix = data['avg_tat_mix']
-    avg_wait_fcfs = data['avg_wait_fcfs']
-    avg_tat_fcfs = data['avg_tat_fcfs']
+    # avg_wait_rr = data['avg_wait_rr']
+    # avg_tat_rr = data['avg_tat_rr']
+    # avg_wait_pbrr = data['avg_wait_pbrr']
+    # avg_tat_pbrr = data['avg_tat_pbrr']
+    # avg_wait_mix = data['avg_wait_mix']
+    # avg_tat_mix = data['avg_tat_mix']
+    # avg_wait_fcfs = data['avg_wait_fcfs']
+    # avg_tat_fcfs = data['avg_tat_fcfs']
 
     # Generate Matplotlib plot
     x = [1, 2, 3, 4]
@@ -174,47 +272,47 @@ def plot():
 
     return send_file(img, mimetype='image/png')
 
-@app.route('/plot2')
-def plot2():
-    data = json.loads(unquote(request.args.get('data')))
-    avg_wait_rr = data['avg_wait_rr']
-    avg_tat_rr = data['avg_tat_rr']
-    avg_wait_pbrr = data['avg_wait_pbrr']
-    avg_tat_pbrr = data['avg_tat_pbrr']
-    avg_wait_mix = data['avg_wait_mix']
-    avg_tat_mix = data['avg_tat_mix']
-    avg_wait_fcfs = data['avg_wait_fcfs']
-    avg_tat_fcfs = data['avg_tat_fcfs']
+# @app.route('/plot2')
+# def plot2():
+#     data = json.loads(unquote(request.args.get('data')))
+#     avg_wait_rr = data['avg_wait_rr']
+#     avg_tat_rr = data['avg_tat_rr']
+#     avg_wait_pbrr = data['avg_wait_pbrr']
+#     avg_tat_pbrr = data['avg_tat_pbrr']
+#     avg_wait_mix = data['avg_wait_mix']
+#     avg_tat_mix = data['avg_tat_mix']
+#     avg_wait_fcfs = data['avg_wait_fcfs']
+#     avg_tat_fcfs = data['avg_tat_fcfs']
 
-    # Generate Matplotlib plot
-    x1 = [1, 2, 3, 4]
-    y3 = [avg_wait_rr, avg_wait_pbrr, avg_wait_mix, avg_wait_fcfs]
-    y4 = [avg_tat_rr, avg_tat_pbrr, avg_tat_mix, avg_tat_fcfs]
+#     # Generate Matplotlib plot
+#     x1 = [1, 2, 3, 4]
+#     y3 = [avg_wait_rr, avg_wait_pbrr, avg_wait_mix, avg_wait_fcfs]
+#     y4 = [avg_tat_rr, avg_tat_pbrr, avg_tat_mix, avg_tat_fcfs]
 
-    # y1 = [sum(avg_wait_rr), sum(avg_wait_pbrr), sum(avg_wait_mix), sum(avg_wait_fcfs)]
-    # y2 = [sum(avg_tat_rr), sum(avg_tat_pbrr), sum(avg_tat_mix), sum(avg_tat_fcfs)]
+#     # y1 = [sum(avg_wait_rr), sum(avg_wait_pbrr), sum(avg_wait_mix), sum(avg_wait_fcfs)]
+#     # y2 = [sum(avg_tat_rr), sum(avg_tat_pbrr), sum(avg_tat_mix), sum(avg_tat_fcfs)]
 
-    fig, ax3 = plt.subplots(figsize=(10, 6))
+#     fig, ax3 = plt.subplots(figsize=(10, 6))
 
-    # Line graph
-    ax3.plot(x1, y3, marker='o', label='Waiting Time')
-    ax3.plot(x1, y4, marker='o', label='Turnaround Time')
-    ax3.set_xticks(x)
-    ax3.set_xticklabels(['RR','PB DRR', 'Mix PI RR', 'FCFS'])
-    ax3.set_xlabel('Scheduling Algorithm')
-    ax3.set_ylabel('Time')
-    ax3.set_title('Comparison of Scheduling Algorithms (Line Graph)')
-    ax3.legend()
+#     # Line graph
+#     ax3.plot(x1, y3, marker='o', label='Waiting Time')
+#     ax3.plot(x1, y4, marker='o', label='Turnaround Time')
+#     ax3.set_xticks(x1)
+#     ax3.set_xticklabels(['RR','PB DRR', 'Mix PI RR', 'FCFS'])
+#     ax3.set_xlabel('Scheduling Algorithm')
+#     ax3.set_ylabel('Time')
+#     ax3.set_title('Comparison of Scheduling Algorithms (Line Graph)')
+#     ax3.legend()
 
-    plt.tight_layout()
+#     plt.tight_layout()
 
-    # Save the plot as a PNG image
-    img1 = BytesIO()
-    plt.savefig(img1, format='png')
-    img1.seek(0)
-    plt.close()
+#     # Save the plot as a PNG image
+#     img1 = BytesIO()
+#     plt.savefig(img1, format='png')
+#     img1.seek(0)
+#     plt.close()
 
-    return send_file(img1, mimetype='image/png')
+#     return send_file(img1, mimetype='image/png')
 
 
 if __name__ == '__main__':

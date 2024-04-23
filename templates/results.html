@@ -96,8 +96,12 @@
     <td>{{ compared_results.avg_tat_fcfs }}</td>
   </tr>
 </table>
+<h1>Scheduling Results</h1>
+<img src="data:image/png;base64,{{ rr_plot }}" alt="Round Robin Results">
+<img src="data:image/png;base64,{{ fcfs_plot }}" alt="FCFS Results">
+<img src="data:image/png;base64,{{ mix_plot }}" alt="Mix PI-RR Improved Results">
+<img src="data:image/png;base64,{{ pbdr_plot }}" alt="Priority Based DRR Results">
+<p><a href="/">Return to Home</a></p>
 
-<!-- <h2>Comparison of Scheduling Algorithms</h2>
-<img src="{{ url_for('plot2', data=data) }}" alt="Final Result Comparison Plot"> -->
 
 {% endblock %}

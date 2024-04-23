@@ -7,7 +7,7 @@
   </div>
   <div>
     <h3>Processes:</h3>
-    {% for i in range(processes|length) %}
+    
     <div style="display: flex; padding-bottom: 30px; margin: auto;">
       <label for="process_{{i}}">Process ID:</label>
       <input type="text" name="processes" id="process_{{i}}" value="{{ processes[i] }}" />
@@ -24,22 +24,22 @@
       <label for="repeat_count_{{i}}">Repeat Count:</label>
       <input type="number" name="repeat_counts" id="repeat_count_{{i}}" value="{{ repeat_counts[i] }}" required />
     </div>
-    {% endfor %}
+  
   </div>
   <input type="submit" value="Schedule" />
-
+</form>
+<form action="/" method="post">
   <div>
     <h2>Testing the samples presented in the paper</h2>
 
     <span>Click here for sample 1 result </span><br><br>
-    <button type="submit" name="file" value="file1">Sample 1</button><br><br>
+    <button type="submit" name="file" value="Sample1">Sample 1</button><br><br>
    
     <span>Click here for sample 2 result </span><br><br> 
-    <button type="submit" name="file" value="file2">Sample 2</button><br><br>
+    <button type="submit" name="file" value="Sample2">Sample 2</button><br><br>
     
     <span>Click here for sample 3 result </span><br><br>
-    <button type="submit" name="file" value="file3">Sample 3</button>
+    <button type="submit" name="file" value="Sample3">Sample 3</button>
   </div>
-
 </form>
 {% endblock %}

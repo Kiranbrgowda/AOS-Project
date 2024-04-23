@@ -31,4 +31,4 @@ waiting_times, turnaround_times = round_robin(burst_times, arrival_times, quantu
 # Calculate the average turnaround time
 average_turnaround_time = sum(turnaround_times) / len(turnaround_times)
 average_waiting_times = sum(waiting_times) / len(waiting_times)
-print("Average Turnaround Time: ", average_turnaround_time,"average_waiting_times: ",average_waiting_times)
+# print("Average Turnaround Time: ", average_turnaround_time,"average_waiting_times: ",average_waiting_times)

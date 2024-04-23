@@ -46,8 +46,8 @@ def mix_pi_rr_improved(processes, burst_times, arrival_times, priorities, repeat
         turnaround_times[i] = completion_times[i] - arrival_times[i]
         waiting_times[i] = turnaround_times[i] - burst_times[i]
     
-    print(waiting_times)
-    print(turnaround_times)
+    # print(waiting_times)
+    # print(turnaround_times)
 
     return waiting_times, turnaround_times
 
@@ -72,8 +72,8 @@ def test_scheduler():
     average_waiting_time = sum(waiting_times) / len(waiting_times)
     average_turnaround_time = sum(turnaround_times) / len(turnaround_times)
 
-    print("Average Waiting Time:", average_waiting_time)
-    print("Average Turnaround Time:", average_turnaround_time)
+    # print("Average Waiting Time:", average_waiting_time)
+    # print("Average Turnaround Time:", average_turnaround_time)
 
     return waiting_times, turnaround_times
 

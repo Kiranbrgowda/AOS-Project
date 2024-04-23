@@ -28,10 +28,10 @@ def calculate_fcfs():
     average_waiting_time = sum(waiting_times) / len(waiting_times)
     average_turnaround_time = sum(turnaround_times) / len(turnaround_times)
 
-    print("Waiting Times:", waiting_times)
-    print("Turnaround Times:", turnaround_times)
-    print("Average Waiting Time:", average_waiting_time)
-    print("Average Turnaround Time:", average_turnaround_time)
+    # print("Waiting Times:", waiting_times)
+    # print("Turnaround Times:", turnaround_times)
+    # print("Average Waiting Time:", average_waiting_time)
+    # print("Average Turnaround Time:", average_turnaround_time)
 
     return waiting_times, turnaround_times, average_waiting_time, average_turnaround_time
 
