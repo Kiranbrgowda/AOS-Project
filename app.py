@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_file,jsonify
+from flask import Flask, render_template, request, send_file
 from mix_pi_rr_improved import mix_pi_rr_improved
 from Roundrobin import round_robin
 from Fcfs import fcfs
@@ -11,11 +11,9 @@ import json
 from urllib.parse import quote, unquote
 from compare_file import compare_scheduling_algorithms
 import base64
-# import requests
 
 app = Flask(__name__)
 
-# Import or include your Mix PI-RR function here
 
 @app.route('/', methods=['GET','POST'])
 def index():
@@ -28,8 +26,14 @@ def readfile():
         file_path = 'Sample1.txt'
     elif file_name == 'Sample2':
         file_path = 'Sample2.txt'
-    else:
+    elif file_name == 'Sample3':
         file_path = 'Sample3.txt'
+    elif file_name == 'Sample4':
+        file_path = 'Sample4.txt'
+    elif file_name == 'Sample5':
+        file_path = 'Sample5.txt'
+    else:
+        file_path = 'Sample6.txt'
 
     with open(file_path, 'r') as file:
         lines = file.readlines()
