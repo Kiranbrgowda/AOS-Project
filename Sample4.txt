@@ -1,0 +1,6 @@
+quantum=3
+processes=P1,P2,P3,P4,P5,P6,P7
+burst_times=9,9,12,8,7,9,12
+arrival_times=0,2,4,5,6,6,6
+priorities=3,2,4,1,5,7,6
+repeat_counts=3,3,7,3,3,7

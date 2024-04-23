@@ -1,45 +1,198 @@
 {% extends "layout.html" %} {% block content %}
+<style>
+  .content {
+    padding: 20px;
+    display: flex;
+    justify-content: center; /* Center align the form in the page */
+  }
+
+  h2 {
+    /* Centering the heading */
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  form {
+    width: 90%; /* Adjust width as needed */
+    max-width: 600px; /* Set a max-width for larger screens */
+    background: #f4f4f4; /* Background color for the form */
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    border-radius: 8px; /* Rounded corners for the form */
+  }
+
+  .process-inputs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center; /* Ensures labels and inputs are aligned at center vertically */
+    margin-bottom: 20px; /* Increase bottom margin for spacing between fields */
+  }
+
+  /* Label and input field styling */
+  .process-inputs label {
+    flex-basis: 25%; /* Adjusted to give labels a bit more room */
+    min-width: 150px;
+    margin-right: 10px; /* Space between label and input */
+    text-align: right; /* Align text to right for better formality */
+  }
+
+  .process-inputs input,
+  .process-inputs button {
+    flex-basis: 70%; /* Adjusted to take the remaining space */
+    min-width: 180px; /* Ensures inputs and buttons have a practical minimum width */
+    padding: 8px; /* Padding inside input for better text visibility */
+  }
+
+  /* Button specific styling */
+  button,
+  input[type="submit"] {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px; /* Top margin for spacing from the last input field */
+    margin-right: 10px; /* Ensure buttons don't touch each other or form edges */
+  }
+
+  button:hover,
+  input[type="submit"]:hover {
+    background-color: #45a049;
+  }
+
+  .add-button {
+    display: block;
+    width: auto;
+    text-align: center;
+    margin: 20px auto; /* Centralize and add space around add button */
+  }
+</style>
+
 <h2>Enter Process Data</h2>
-<form action="/schedule" method="post">
+<form id="processForm" action="/schedule" method="post">
   <div>
     <h3>Quantum Time:</h3>
-    <input type="number" name="quantum" value="{{ quantum }}" required />
+    <input type="number" name="quantum" required />
   </div>
-  <div>
+  <div id="processesContainer">
     <h3>Processes:</h3>
-    
-    <div style="display: flex; padding-bottom: 30px; margin: auto;">
-      <label for="process_{{i}}">Process ID:</label>
-      <input type="text" name="processes" id="process_{{i}}" value="{{ processes[i] }}" />
+    <!-- Initial set of inputs for one process -->
+    <div class="process-inputs" style="padding-bottom: 30px">
+      <label for="process_0">Process ID:</label>
+      <input type="text" name="processes[]" id="process_0" required />
 
-      <label for="burst_time_{{i}}">Burst Time:</label>
-      <input type="number" name="burst_times" id="burst_time_{{i}}" value="{{ burst_times[i] }}" required />
+      <label for="burst_time_0">Burst Time:</label>
+      <input type="number" name="burst_times[]" id="burst_time_0" required />
 
-      <label for="arrival_time_{{i}}">Arrival Time:</label>
-      <input type="number" name="arrival_times" id="arrival_time_{{i}}" value="{{ arrival_times[i] }}" required />
+      <label for="arrival_time_0">Arrival Time:</label>
+      <input
+        type="number"
+        name="arrival_times[]"
+        id="arrival_time_0"
+        required
+      />
 
-      <label for="priority_{{i}}">Priority:</label>
-      <input type="number" name="priorities" id="priority_{{i}}" value="{{ priorities[i] }}" required />
+      <label for="priority_0">Priority:</label>
+      <input type="number" name="priorities[]" id="priority_0" required />
 
-      <label for="repeat_count_{{i}}">Repeat Count:</label>
-      <input type="number" name="repeat_counts" id="repeat_count_{{i}}" value="{{ repeat_counts[i] }}" required />
+      <label for="repeat_count_0">Repeat Count:</label>
+      <input
+        type="number"
+        name="repeat_counts[]"
+        id="repeat_count_0"
+        required
+      />
+      <button
+        type="button"
+        onclick="removeProcess(0)"
+        style="background-color: red"
+      >
+        Remove
+      </button>
     </div>
-  
   </div>
+  <button type="button" onclick="addProcess()">Add Another Process</button>
   <input type="submit" value="Schedule" />
 </form>
-<form action="/" method="post">
+<form action="/readfile" method="post">
   <div>
     <h2>Testing the samples presented in the paper</h2>
 
-    <span>Click here for sample 1 result </span><br><br>
-    <button type="submit" name="file" value="Sample1">Sample 1</button><br><br>
-   
-    <span>Click here for sample 2 result </span><br><br> 
-    <button type="submit" name="file" value="Sample2">Sample 2</button><br><br>
-    
-    <span>Click here for sample 3 result </span><br><br>
-    <button type="submit" name="file" value="Sample3">Sample 3</button>
+    <span>Click here for sample 1 result </span><br /><br />
+    <button type="submit" name="file" value="Sample1">Sample 1</button
+    ><br /><br />
+
+    <span>Click here for sample 2 result </span><br /><br />
+    <button type="submit" name="file" value="Sample2">Sample 2</button
+    ><br /><br />
+
+    <span>Click here for sample 3 result </span><br /><br />
+    <button type="submit" name="file" value="Sample3">Sample 3</button
+    ><br /><br />
+
+    <span>Click here for sample 4 result </span><br /><br />
+    <button type="submit" name="file" value="Sample4">Sample 4</button
+    ><br /><br />
+    <span>Click here for sample 5 result </span><br /><br />
+    <button type="submit" name="file" value="Sample5">Sample 5</button
+    ><br /><br />
+    <span>Click here for sample 5 result </span><br /><br />
+    <button type="submit" name="file" value="Sample6">Sample 6</button>
   </div>
 </form>
+<script>
+  let processIndex = 1;
+
+  function addProcess() {
+    const container = document.getElementById("processesContainer");
+    const newDiv = document.createElement("div");
+    newDiv.className = "process-inputs";
+    newDiv.style.paddingBottom = "30px";
+    newDiv.id = `process_${processIndex}`;
+    newDiv.innerHTML = `
+      <label for="process_${processIndex}">Process ID:</label>
+      <input type="text" name="processes[]" id="process_${processIndex}" required />
+
+      <label for="burst_time_${processIndex}">Burst Time:</label>
+      <input type="number" name="burst_times[]" id="burst_time_${processIndex}" required />
+
+      <label for="arrival_time_${processIndex}">Arrival Time:</label>
+      <input type="number" name="arrival_times[]" id="arrival_time_${processIndex}" required />
+
+      <label for="priority_${processIndex}">Priority:</label>
+      <input type="number" name="priorities[]" id="priority_${processIndex}" required />
+
+      <label for="repeat_count_${processIndex}">Repeat Count:</label>
+      <input type="number" name="repeat_counts[]" id="repeat_count_${processIndex}" required />
+      <button type="button" onclick="removeProcess(${processIndex})" style="background-color: red;">Remove</button>
+    `;
+    container.appendChild(newDiv);
+    updateRemoveButtons();
+    processIndex++;
+  }
+
+  function removeProcess(index) {
+    const container = document.getElementById("processesContainer");
+    if (container.children.length > 1) {
+      const element = document.getElementById(`process_${index}`);
+      container.removeChild(element);
+      updateRemoveButtons();
+    }
+  }
+
+  function updateRemoveButtons() {
+    const container = document.getElementById("processesContainer");
+    const buttons = container.querySelectorAll("button");
+    if (buttons.length === 1) {
+      buttons[0].disabled = true; // Disable the remove button if only one process input exists
+    } else {
+      buttons.forEach((button) => (button.disabled = false));
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    updateRemoveButtons(); // Call on initial load
+  });
+</script>
 {% endblock %}

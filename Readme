@@ -1,0 +1,48 @@
+# CPU Scheduling Algorithms
+
+This repository contains multiple Python implementations of CPU scheduling algorithms. These scripts demonstrate various scheduling strategies including First-Come, First-Served (FCFS), Round Robin (RR), Priority-Based Dynamic Round Robin (PBDRR), and a Mixed Priority and Round Robin (Mix PI-RR) algorithm. Each script is designed to simulate how these algorithms would handle process scheduling in an operating system.
+
+## Algorithms Included
+
+1. **FCFS (First-Come, First-Served)**
+
+   - **File**: `Fcfs.py`
+   - Description: Implements the simplest type of CPU scheduling algorithm, which processes requests in the order that they arrive.
+
+2. **Round Robin (RR)**
+
+   - **File**: `Roundrobin.py`
+   - Description: Implements the Round Robin scheduling algorithm which is particularly useful in a time-sharing environment. It uses time slices (quantum) to ensure that all processes receive an equal share of the CPU.
+
+3. **Priority-Based Dynamic Round Robin (PBDRR)**
+
+   - **File**: `pbdrr.py`
+   - Description: A hybrid scheduling algorithm that combines the concepts of priority scheduling and dynamic round-robin to enhance performance and reduce waiting time.
+
+4. **Mix PI-RR (Priority and Round Robin Mixed Algorithm)**
+
+   - **File**: `mix_pi_rr_improved.py`
+   - Description: Combines both priority and round-robin scheduling techniques to manage CPU scheduling efficiently, aiming to minimize waiting time and avoid starvation.
+
+5. **Comparative Analysis**
+
+   - **File**: `compare_file.py`
+   - Description: Used to compare the performance of the implemented scheduling algorithms based on various metrics such as average waiting time and turnaround time.
+
+6. **Application Simulator**
+   - **File**: `app.py`
+   - Description: A Python application that utilizes the scheduling algorithms to simulate a real-world operating environment where processes are managed by the CPU.
+
+## Usage
+
+Each script can be run independently with Python. Example:
+
+```bash
+python3 Roundrobin.py
+```
+
+To run the flask application use the command
+
+```bash
+python3 app.py
+```

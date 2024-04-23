@@ -5,66 +5,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Scheduler</title>
     <style>
+      html,
       body {
-        font-family: Arial, sans-serif;
+        height: 100%; /* ensure the parent is full height */
         margin: 0;
-        padding: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .logo img {
+        height: 80px;
       }
       header {
-        background-color: #7B1113;
+        background-color: #7b1113;
         color: white;
-        padding: 20px;
+        padding: 10px;
         text-align: center;
       }
       footer {
-        background-color: #7B1113;
+        background-color: #7b1113;
         color: white;
         padding: 10px;
         text-align: center;
       }
       .content {
+        flex: 1; /* flex-grow to take available space */
         max-width: 800px;
-        margin: 0 auto;
+        width: 100%; /* ensures it fills the space horizontally */
+        margin: auto; /* center horizontally */
         padding: 20px;
       }
-      table {
-        width: 100%;
-        border-collapse: collapse;
+      .process-inputs {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        margin-bottom: 10px;
       }
-      th, td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
+      .process-inputs label {
+        flex-basis: 20%;
+        min-width: 150px;
       }
-      th {
-        background-color: #f2f2f2;
+      .process-inputs input {
+        flex-basis: 70%;
+        min-width: 200px;
       }
+      button,
       input[type="submit"] {
-        background-color: #4CAF50;
+        background-color: #4caf50;
         color: white;
-        padding: 10px 20px;
         border: none;
+        padding: 10px 15px;
+        margin-top: 10px;
         cursor: pointer;
+        border-radius: 5px;
       }
+      button:hover,
       input[type="submit"]:hover {
         background-color: #45a049;
       }
-      .logo img {
-    height: 80px; /* Adjust the height of the logo as needed */}
+      .add-button {
+        display: block;
+        width: auto;
+        text-align: center;
+        margin: 20px auto;
+      }
     </style>
   </head>
   <body>
     <header>
       <div class="logo">
-        <img src="{{ url_for('static', filename='images/fsu.png') }}" alt="Logo">
-    </div>
+        <img
+          src="{{ url_for('static', filename='images/fsu.png') }}"
+          alt="Logo"
+        />
+      </div>
       <h1>Scheduling Algorithms</h1>
     </header>
-    <div class="content">
-      {% block content %}{% endblock %}
-    </div>
-    <footer>
-      &copy; 2024 Florida State University.
-    </footer>
+    <div class="content">{% block content %}{% endblock %}</div>
+    <footer>&copy; 2024 Florida State University.</footer>
   </body>
 </html>
